@@ -181,6 +181,11 @@ func (db *Database) Namespace() string {
 	return db.namespace
 }
 
+// Type returns the type of the table.
+func (db *Database) Type(table string) reflect.Type {
+	return db.types[table]
+}
+
 // // ForEach ...
 // func ForEach(set string, callback func(as.BinMap)) {
 // 	recs, _ := client.ScanAll(scanPolicy, namespace, set)
