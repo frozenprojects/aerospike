@@ -46,3 +46,4 @@ users := objects.([]*User)
 ### GetMap
 ### GetObject
 ### DeleteTable
+### Namespace

@@ -17,7 +17,7 @@ func init() {
 type Database struct {
 	namespace string
 	types     map[string]reflect.Type
-	client    *as.Client
+	Client    *as.Client
 }
 
 // NewDatabase creates a new database client.
@@ -47,7 +47,7 @@ func NewDatabase(host string, port int, namespace string, tables []interface{}) 
 	return &Database{
 		namespace: namespace,
 		types:     tableTypes,
-		client:    client,
+		Client:    client,
 	}
 }
 
@@ -66,7 +66,7 @@ func (db *Database) Get(table string, id string) (interface{}, error) {
 	}
 
 	obj := reflect.New(t).Interface()
-	err := db.client.GetObject(nil, pk, obj)
+	err := db.Client.GetObject(nil, pk, obj)
 
 	return obj, err
 }
@@ -79,7 +79,7 @@ func (db *Database) Set(table string, id string, obj interface{}) error {
 		return keyErr
 	}
 
-	return db.client.PutObject(nil, pk, obj)
+	return db.Client.PutObject(nil, pk, obj)
 }
 
 // Delete deletes an object from the database and returns if it existed.
@@ -90,12 +90,12 @@ func (db *Database) Delete(table string, id string) (existed bool, err error) {
 		return false, keyErr
 	}
 
-	return db.client.Delete(nil, pk)
+	return db.Client.Delete(nil, pk)
 }
 
 // Scan writes all objects from a given table to the channel.
 func (db *Database) Scan(table string, channel interface{}) error {
-	_, err := db.client.ScanAllObjects(nil, channel, db.namespace, table)
+	_, err := db.Client.ScanAllObjects(nil, channel, db.namespace, table)
 	return err
 }
 
@@ -114,7 +114,7 @@ func (db *Database) GetObject(table string, id string, obj interface{}) error {
 		return keyErr
 	}
 
-	return db.client.GetObject(nil, pk, obj)
+	return db.Client.GetObject(nil, pk, obj)
 }
 
 // GetMap retrieves the data as a map[string]interface{}.
@@ -125,7 +125,7 @@ func (db *Database) GetMap(table string, id string) (as.BinMap, error) {
 		return nil, keyErr
 	}
 
-	rec, err := db.client.Get(nil, pk)
+	rec, err := db.Client.Get(nil, pk)
 
 	if err != nil {
 		return nil, err
@@ -173,7 +173,12 @@ func (db *Database) GetMany(table string, idList []string) (interface{}, error) 
 
 // DeleteTable deletes a table.
 func (db *Database) DeleteTable(table string) error {
-	return db.client.Truncate(nil, db.namespace, table, nil)
+	return db.Client.Truncate(nil, db.namespace, table, nil)
+}
+
+// Namespace returns the name of the namespace.
+func (db *Database) Namespace() string {
+	return db.namespace
 }
 
 // // ForEach ...
