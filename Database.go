@@ -1,4 +1,4 @@
-package arn
+package aerospike
 
 import (
 	"errors"
