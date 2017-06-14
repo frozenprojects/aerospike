@@ -186,6 +186,11 @@ func (db *Database) Type(table string) reflect.Type {
 	return db.types[table]
 }
 
+// Types returns the types of all tables as a map.
+func (db *Database) Types() map[string]reflect.Type {
+	return db.types
+}
+
 // // ForEach ...
 // func ForEach(set string, callback func(as.BinMap)) {
 // 	recs, _ := client.ScanAll(scanPolicy, namespace, set)
