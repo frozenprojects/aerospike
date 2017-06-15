@@ -2,7 +2,6 @@ package aerospike
 
 import (
 	"errors"
-	"fmt"
 	"reflect"
 
 	as "github.com/aerospike/aerospike-client-go"
@@ -31,12 +30,9 @@ func NewDatabase(host string, port int, namespace string, tables []interface{}) 
 
 	// Client policy
 	clientPolicy := as.NewClientPolicy()
-	clientPolicy.LimitConnectionsToQueueSize = false
 
 	// Create client
 	client, err := as.NewClientWithPolicy(clientPolicy, host, port)
-
-	fmt.Println(client.Cluster().ClientPolicy().LimitConnectionsToQueueSize)
 
 	if err != nil {
 		panic(err)
