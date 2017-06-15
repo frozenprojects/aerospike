@@ -10,9 +10,9 @@ db := aerospike.NewDatabase(
 	"YOUR_NAMESPACE",
 	[]interface{}{
 		// Class names = Table names
-		new(User),
-		new(Post),
-		new(Thread),
+		(*User)(nil),
+		(*Post)(nil),
+		(*Thread)(nil),
 	},
 )
 ```
