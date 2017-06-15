@@ -30,6 +30,7 @@ func NewDatabase(host string, port int, namespace string, tables []interface{}) 
 
 	// Client policy
 	clientPolicy := as.NewClientPolicy()
+	clientPolicy.ConnectionQueueSize = 1024
 
 	// Create client
 	client, err := as.NewClientWithPolicy(clientPolicy, host, port)
