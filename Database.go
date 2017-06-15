@@ -2,8 +2,8 @@ package aerospike
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
-	"sync"
 
 	as "github.com/aerospike/aerospike-client-go"
 )
@@ -29,8 +29,14 @@ func NewDatabase(host string, port int, namespace string, tables []interface{}) 
 		tableTypes[typeInfo.Name()] = typeInfo
 	}
 
+	// Client policy
+	clientPolicy := as.NewClientPolicy()
+	clientPolicy.LimitConnectionsToQueueSize = false
+
 	// Create client
-	client, err := as.NewClient(host, port)
+	client, err := as.NewClientWithPolicy(clientPolicy, host, port)
+
+	fmt.Println(client.Cluster().ClientPolicy().LimitConnectionsToQueueSize)
 
 	if err != nil {
 		panic(err)
@@ -147,28 +153,34 @@ func (db *Database) GetMany(table string, idList []string) (interface{}, error) 
 		return nil, errors.New("Data type has not been defined for table " + table)
 	}
 
+	// Number of keys
+	num := len(idList)
+
 	// Create a slice of pointers
-	objects := reflect.MakeSlice(reflect.SliceOf(reflect.PtrTo(t)), len(idList), len(idList))
+	objType := reflect.SliceOf(t)
+	ptrType := reflect.SliceOf(reflect.PtrTo(t))
+	objects := reflect.MakeSlice(objType, num, num)
+	pointers := reflect.MakeSlice(ptrType, num, num)
 
-	// Start a goroutine for each Get request
-	wg := sync.WaitGroup{}
-	wg.Add(len(idList))
+	keys := make([]*as.Key, num, num)
+	interfaceSlice := make([]interface{}, num, num)
 
-	for index, id := range idList {
-		listIndex := index
-		objectID := id
+	for i := 0; i < num; i++ {
+		keys[i], _ = as.NewKey(db.namespace, table, idList[i])
 
-		go func() {
-			obj, _ := db.Get(table, objectID)
-			objects.Index(listIndex).Set(reflect.ValueOf(obj))
-
-			wg.Done()
-		}()
+		objAddr := objects.Index(i).Addr()
+		pointers.Index(i).Set(objAddr)
+		interfaceSlice[i] = objAddr.Interface()
 	}
 
-	wg.Wait()
+	// This needs an interface slice of pointers to structs.
+	_, err := db.Client.BatchGetObjects(nil, keys, interfaceSlice)
 
-	return objects.Interface(), nil
+	if err != nil {
+		return nil, err
+	}
+
+	return pointers.Interface(), nil
 }
 
 // DeleteTable deletes a table.
