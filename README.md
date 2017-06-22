@@ -6,7 +6,7 @@ The main motivation for creating this client is to automatically build REST APIs
 
 Struct fields must have a `json` tag if you want to save them in the database.
 
-The lib also allows controlling Aerospike Go API directly by accessing `DB.Client` in case you need low-level access.
+The lib also allows controlling Aerospike Go API directly by accessing `db.Client` in case you need low-level access.
 
 ## API
 
