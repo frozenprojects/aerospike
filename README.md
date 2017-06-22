@@ -2,6 +2,8 @@
 
 An Aerospike database client where each set is called a "table" and each table has a struct assigned to it.
 
+The main motivation for creating this client is to automatically build REST APIs from your structs using [aerogo/api](https://github.com/aerogo/api).
+
 Struct fields must have a `json` tag if you want to save them in the database.
 
 The lib also allows controlling Aerospike Go API directly by accessing `DB.Client` in case you need low-level access.
@@ -141,3 +143,5 @@ namespace := db.Namespace()
 ```
 
 Returns the previously registered namespace.
+
+[![By Eduard Urbach](http://forthebadge.com/images/badges/built-with-love.svg)](https://github.com/blitzprog)
