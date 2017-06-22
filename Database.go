@@ -96,6 +96,17 @@ func (db *Database) Delete(table string, id string) (existed bool, err error) {
 	return db.Client.Delete(nil, pk)
 }
 
+// Exists tells you if the given record exists.
+func (db *Database) Exists(table string, id string) (bool, error) {
+	pk, keyErr := as.NewKey(db.namespace, table, id)
+
+	if keyErr != nil {
+		return false, keyErr
+	}
+
+	return db.Client.Exists(nil, pk)
+}
+
 // Scan writes all objects from a given table to the channel.
 func (db *Database) Scan(table string, channel interface{}) error {
 	_, err := db.Client.ScanAllObjects(nil, channel, db.namespace, table)
