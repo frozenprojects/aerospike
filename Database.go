@@ -191,7 +191,7 @@ func (db *Database) GetMany(table string, idList []string) (interface{}, error) 
 	return pointers.Interface(), nil
 }
 
-// DeleteTable deletes a table.
+// DeleteTable deletes all content from the given table.
 func (db *Database) DeleteTable(table string) error {
 	return db.Client.Truncate(nil, db.namespace, table, nil)
 }
