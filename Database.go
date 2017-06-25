@@ -170,6 +170,11 @@ func (db *Database) GetMany(table string, idList []string) (interface{}, error) 
 	objects := reflect.MakeSlice(objType, num, num)
 	pointers := reflect.MakeSlice(ptrType, num, num)
 
+	// Return early if there's nothing to do
+	if num == 0 {
+		return pointers.Interface(), nil
+	}
+
 	keys := make([]*as.Key, num, num)
 	interfaceSlice := make([]interface{}, num, num)
 
