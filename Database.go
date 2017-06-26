@@ -42,6 +42,10 @@ func NewDatabase(host string, port int, namespace string, tables []interface{}) 
 	// Make Set() calls delete old fields instead of only updating new ones
 	client.DefaultWritePolicy.RecordExistsAction = as.REPLACE
 
+	// This will make delete actually...delete things...you know.
+	// Otherwise they'll just reappear after a node restart.
+	client.DefaultWritePolicy.DurableDelete = true
+
 	// Make scans faster
 	client.DefaultScanPolicy.Priority = as.HIGH
 	client.DefaultScanPolicy.ConcurrentNodes = true
