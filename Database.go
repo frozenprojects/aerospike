@@ -44,7 +44,7 @@ func NewDatabase(host string, port int, namespace string, tables []interface{}) 
 
 	// This will make delete actually...delete things...you know.
 	// Otherwise they'll just reappear after a node restart.
-	client.DefaultWritePolicy.DurableDelete = true
+	// client.DefaultWritePolicy.DurableDelete = true
 
 	// Make scans faster
 	client.DefaultScanPolicy.Priority = as.HIGH
