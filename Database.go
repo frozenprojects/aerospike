@@ -119,7 +119,7 @@ func (db *Database) Scan(table string, channel interface{}) error {
 
 // All returns a stream of all objects in the given table.
 func (db *Database) All(table string) (interface{}, error) {
-	channel := reflect.MakeChan(db.types[table], 0)
+	channel := reflect.MakeChan(reflect.ChanOf(reflect.BothDir, reflect.PtrTo(db.types[table])), 0).Interface()
 	err := db.Scan(table, channel)
 	return channel, err
 }
