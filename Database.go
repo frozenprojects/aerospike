@@ -46,8 +46,8 @@ func NewDatabase(host string, port int, namespace string, tables []interface{}) 
 	// Otherwise they'll just reappear after a node restart.
 	// client.DefaultWritePolicy.DurableDelete = true
 
-	// Make scans faster
-	client.DefaultScanPolicy.Priority = as.HIGH
+	// Scan policy
+	client.DefaultScanPolicy.Priority = as.LOW
 	client.DefaultScanPolicy.ConcurrentNodes = true
 	client.DefaultScanPolicy.IncludeBinData = true
 
@@ -55,6 +55,20 @@ func NewDatabase(host string, port int, namespace string, tables []interface{}) 
 		namespace: namespace,
 		types:     tableTypes,
 		Client:    client,
+	}
+}
+
+// SetScanPriority sets the scan priority.
+func (db *Database) SetScanPriority(priority string) {
+	switch priority {
+	case "high":
+		db.Client.DefaultScanPolicy.Priority = as.HIGH
+	case "medium":
+		db.Client.DefaultScanPolicy.Priority = as.MEDIUM
+	case "low":
+		db.Client.DefaultScanPolicy.Priority = as.LOW
+	default:
+		db.Client.DefaultScanPolicy.Priority = as.DEFAULT
 	}
 }
 
