@@ -131,6 +131,26 @@ func (db *Database) Scan(table string, channel interface{}) error {
 	return err
 }
 
+// ScanMap writes all objects from a given table to the channel.
+func (db *Database) ScanMap(table string) (chan as.BinMap, error) {
+	channel := make(chan as.BinMap)
+	recordSet, err := db.Client.ScanAll(nil, db.namespace, table)
+
+	if err != nil {
+		return nil, err
+	}
+
+	go func() {
+		defer close(channel)
+
+		for result := range recordSet.Results() {
+			channel <- result.Record.Bins
+		}
+	}()
+
+	return channel, nil
+}
+
 // All returns a stream of all objects in the given table.
 func (db *Database) All(table string) (interface{}, error) {
 	channel := reflect.MakeChan(reflect.ChanOf(reflect.BothDir, reflect.PtrTo(db.types[table])), 0).Interface()
