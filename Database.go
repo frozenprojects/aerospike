@@ -3,6 +3,7 @@ package aerospike
 import (
 	"errors"
 	"reflect"
+	"time"
 
 	as "github.com/aerospike/aerospike-client-go"
 )
@@ -50,6 +51,9 @@ func NewDatabase(host string, port int, namespace string, tables []interface{}) 
 	client.DefaultScanPolicy.Priority = as.LOW
 	client.DefaultScanPolicy.ConcurrentNodes = true
 	client.DefaultScanPolicy.IncludeBinData = true
+	client.DefaultScanPolicy.Timeout = 0
+	client.DefaultScanPolicy.SocketTimeout = 0
+	client.DefaultScanPolicy.ServerSocketTimeout = 2 * time.Hour
 
 	return &Database{
 		namespace: namespace,
